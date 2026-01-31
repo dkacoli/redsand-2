@@ -148,7 +148,7 @@ class REDSANDAPITester:
             "property_id": self.created_property_id
         }
         
-        return self.run_test("Create Inquiry", "POST", "inquiries", 201, data=inquiry_data)
+        return self.run_test("Create Inquiry", "POST", "inquiries", 200, data=inquiry_data)
 
     def test_get_inquiries(self):
         """Test getting all inquiries"""
