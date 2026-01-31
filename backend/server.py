@@ -101,6 +101,17 @@ class AdminLogin(BaseModel):
 async def root():
     return {"message": "REDSAND Real Estate API"}
 
+# Admin login endpoint
+@api_router.post("/admin/login")
+async def admin_login(credentials: AdminLogin):
+    admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'redsand2024')
+    
+    if credentials.username == admin_username and credentials.password == admin_password:
+        return {"success": True, "message": "Login successful"}
+    else:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
 # Property endpoints
 @api_router.post("/properties", response_model=Property)
 async def create_property(property_data: PropertyCreate):
