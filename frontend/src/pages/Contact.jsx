@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Mail, Globe, Send, Copy, Check, Phone, User, MessageSquare } from "lucide-react";
+import { MapPin, Mail, Globe, Send, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 import {
@@ -35,6 +35,13 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate both email and phone are provided
+    if (!formData.email || !formData.phone) {
+      toast.error("Please provide both email and phone number");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -198,61 +205,52 @@ export default function Contact() {
                     {/* Name */}
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
-                        Full Name *
+                        Full Name <span className="text-gold">*</span>
                       </label>
-                      <div className="relative">
-                        <User size={18} className="absolute left-0 top-1/2 -translate-y-1/2 text-gold" />
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="Enter your full name"
-                          required
-                          data-testid="inquiry-form-name"
-                          className="input-underline pl-8"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Enter your full name"
+                        required
+                        data-testid="inquiry-form-name"
+                        className="input-underline"
+                      />
                     </div>
 
                     {/* Email */}
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
-                        Email Address *
+                        Email Address <span className="text-gold">*</span>
                       </label>
-                      <div className="relative">
-                        <Mail size={18} className="absolute left-0 top-1/2 -translate-y-1/2 text-gold" />
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="Enter your email"
-                          required
-                          data-testid="inquiry-form-email"
-                          className="input-underline pl-8"
-                        />
-                      </div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email address"
+                        required
+                        data-testid="inquiry-form-email"
+                        className="input-underline"
+                      />
                     </div>
 
                     {/* Phone */}
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
-                        Phone Number *
+                        Phone Number <span className="text-gold">*</span>
                       </label>
-                      <div className="relative">
-                        <Phone size={18} className="absolute left-0 top-1/2 -translate-y-1/2 text-gold" />
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+971 XX XXX XXXX"
-                          required
-                          data-testid="inquiry-form-phone"
-                          className="input-underline pl-8"
-                        />
-                      </div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="+971 XX XXX XXXX"
+                        required
+                        data-testid="inquiry-form-phone"
+                        className="input-underline"
+                      />
                     </div>
 
                     {/* Interest */}
@@ -263,7 +261,7 @@ export default function Contact() {
                       <Select value={formData.interest} onValueChange={handleSelectChange}>
                         <SelectTrigger 
                           data-testid="inquiry-form-interest"
-                          className="bg-transparent border-0 border-b border-white/20 rounded-none text-white focus:ring-0 focus:border-gold px-0"
+                          className="bg-transparent border-0 border-b border-white/20 rounded-none text-white focus:ring-0 focus:border-gold px-0 h-12"
                         >
                           <SelectValue placeholder="Select your interest" />
                         </SelectTrigger>
@@ -280,21 +278,18 @@ export default function Contact() {
                     {/* Message */}
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
-                        Your Message *
+                        Your Message <span className="text-gold">*</span>
                       </label>
-                      <div className="relative">
-                        <MessageSquare size={18} className="absolute left-0 top-4 text-gold" />
-                        <textarea
-                          name="message"
-                          value={formData.message}
-                          onChange={handleChange}
-                          placeholder="Tell us about your requirements..."
-                          required
-                          rows={4}
-                          data-testid="inquiry-form-message"
-                          className="input-underline pl-8 resize-none"
-                        />
-                      </div>
+                      <textarea
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
+                        placeholder="Tell us about your requirements..."
+                        required
+                        rows={4}
+                        data-testid="inquiry-form-message"
+                        className="input-underline resize-none"
+                      />
                     </div>
 
                     {/* Submit Button */}
