@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, Building2, MessageSquare, Plus, Edit, Trash2,
-  Menu, X, LogOut, TrendingUp, Home, Users, Eye
+  Menu, X, LogOut, TrendingUp, Home, Eye, Lock
 } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
@@ -26,8 +26,106 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_e52b6fc9-8e43-4b5f-917f-6f93474b6661/artifacts/bif9mvec_logo1212.png";
 
+// Login Component
+function AdminLogin({ onLogin }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await axios.post(`${API}/admin/login`, { username, password });
+      if (response.data.success) {
+        sessionStorage.setItem("adminLoggedIn", "true");
+        onLogin();
+        toast.success("Welcome to Admin Panel");
+      }
+    } catch (err) {
+      setError("Invalid username or password");
+      toast.error("Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-dark flex items-center justify-center px-6">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <img src={LOGO_URL} alt="REDSAND" className="h-16 mx-auto mb-6" />
+          <h1 className="font-playfair text-3xl text-white mb-2">Admin Login</h1>
+          <p className="text-white/50">Enter your credentials to access the admin panel</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="glass p-8 space-y-6">
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              data-testid="admin-login-username"
+              className="input-underline"
+              placeholder="Enter username"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              data-testid="admin-login-password"
+              className="input-underline"
+              placeholder="Enter password"
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-400 text-sm text-center">{error}</p>
+          )}
+
+          <Button
+            type="submit"
+            disabled={loading}
+            data-testid="admin-login-submit"
+            className="w-full bg-gold text-black hover:bg-gold-hover"
+          >
+            {loading ? (
+              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <Lock size={16} className="mr-2" />
+                Login
+              </>
+            )}
+          </Button>
+        </form>
+
+        <p className="text-center text-white/30 text-sm mt-6">
+          <Link to="/" className="text-gold hover:text-gold-hover">
+            ← Back to Website
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Admin Sidebar Component
-function AdminSidebar({ isOpen, setIsOpen }) {
+function AdminSidebar({ isOpen, setIsOpen, onLogout }) {
   const location = useLocation();
   
   const navItems = [
@@ -84,6 +182,14 @@ function AdminSidebar({ isOpen, setIsOpen }) {
             <Eye size={18} strokeWidth={1.5} />
             <span className="text-sm">View Site</span>
           </Link>
+          <button
+            onClick={onLogout}
+            data-testid="admin-logout"
+            className="flex items-center gap-3 px-4 py-3 text-white/60 hover:text-red-400 transition-colors w-full"
+          >
+            <LogOut size={18} strokeWidth={1.5} />
+            <span className="text-sm">Logout</span>
+          </button>
         </div>
       </aside>
     </>
@@ -595,10 +701,34 @@ function InquiriesManagement() {
 // Main Admin Component
 export default function Admin() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const loggedIn = sessionStorage.getItem("adminLoggedIn");
+    if (loggedIn === "true") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminLoggedIn");
+    setIsLoggedIn(false);
+    toast.success("Logged out successfully");
+  };
+
+  // Show login page if not logged in
+  if (!isLoggedIn) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-dark">
-      <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
+      <AdminSidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} onLogout={handleLogout} />
 
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-dark-surface border-b border-gold/10 z-30 flex items-center px-4">
