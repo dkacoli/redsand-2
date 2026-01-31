@@ -1,52 +1,54 @@
-import { useEffect } from "react";
 import "@/App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { Toaster } from "@/components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Pages
+import Home from "@/pages/Home";
+import InvestmentProperties from "@/pages/InvestmentProperties";
+import ResidentialProperties from "@/pages/ResidentialProperties";
+import PropertyDetail from "@/pages/PropertyDetail";
+import About from "@/pages/About";
+import Services from "@/pages/Services";
+import Contact from "@/pages/Contact";
+import Admin from "@/pages/Admin";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
-
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+// Layout Components
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 function App() {
   return (
-    <div className="App">
+    <div className="App min-h-screen bg-dark">
+      <div className="noise-overlay"></div>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          {/* Admin routes without navbar/footer */}
+          <Route path="/admin/*" element={<Admin />} />
+          
+          {/* Public routes with navbar/footer */}
+          <Route
+            path="*"
+            element={
+              <>
+                <Navbar />
+                <main>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/investment" element={<InvestmentProperties />} />
+                    <Route path="/residential" element={<ResidentialProperties />} />
+                    <Route path="/property/:id" element={<PropertyDetail />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/services" element={<Services />} />
+                    <Route path="/contact" element={<Contact />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </>
+            }
+          />
         </Routes>
       </BrowserRouter>
+      <Toaster position="bottom-right" theme="dark" />
     </div>
   );
 }
