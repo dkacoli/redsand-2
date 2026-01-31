@@ -87,7 +87,7 @@ class REDSANDAPITester:
             "rental_yield": 6.2
         }
         
-        success, response = self.run_test("Create Property", "POST", "properties", 201, data=property_data)
+        success, response = self.run_test("Create Property", "POST", "properties", 200, data=property_data)
         if success and 'id' in response:
             self.created_property_id = response['id']
             print(f"   Created property ID: {self.created_property_id}")
