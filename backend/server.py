@@ -92,6 +92,10 @@ class ContactInquiryCreate(BaseModel):
     message: str
     property_id: Optional[str] = None
 
+class AdminLogin(BaseModel):
+    username: str
+    password: str
+
 # Root endpoint
 @api_router.get("/")
 async def root():
