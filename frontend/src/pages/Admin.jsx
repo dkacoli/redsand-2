@@ -670,8 +670,22 @@ function InquiriesManagement() {
             <div key={inquiry.id} className="glass p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-white font-medium">{inquiry.name}</h3>
-                  <p className="text-gold text-sm">{inquiry.email}</p>
+                  <h3 className="text-white font-medium text-lg">{inquiry.name}</h3>
+                  <div className="flex flex-wrap gap-4 mt-2">
+                    <a href={`mailto:${inquiry.email}`} className="text-gold text-sm hover:text-gold-hover">
+                      {inquiry.email}
+                    </a>
+                    {inquiry.phone && (
+                      <a href={`tel:${inquiry.phone}`} className="text-gold text-sm hover:text-gold-hover">
+                        {inquiry.phone}
+                      </a>
+                    )}
+                  </div>
+                  {inquiry.interest && (
+                    <span className="inline-block mt-2 px-2 py-1 text-xs uppercase tracking-wider bg-gold/10 text-gold border border-gold/20">
+                      {inquiry.interest}
+                    </span>
+                  )}
                 </div>
                 <button
                   onClick={() => handleDelete(inquiry.id)}
@@ -681,7 +695,7 @@ function InquiriesManagement() {
                   <Trash2 size={16} />
                 </button>
               </div>
-              <p className="text-white/70">{inquiry.message}</p>
+              <p className="text-white/70 mt-4">{inquiry.message}</p>
               <p className="text-white/30 text-xs mt-4">
                 {new Date(inquiry.created_at).toLocaleString()}
               </p>
