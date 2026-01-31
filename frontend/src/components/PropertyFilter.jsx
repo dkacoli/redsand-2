@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -17,11 +17,10 @@ export default function PropertyFilter({ onFilterChange, propertyType }) {
   const [areas, setAreas] = useState([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [filters, setFilters] = useState({
-    area: "",
-    bedrooms: "",
-    minPrice: "",
-    maxPrice: "",
-    status: "",
+    area: "all",
+    bedrooms: "any",
+    minPrice: "none",
+    maxPrice: "none",
   });
 
   useEffect(() => {
@@ -45,25 +44,27 @@ export default function PropertyFilter({ onFilterChange, propertyType }) {
     if (propertyType) params.property_type = propertyType;
     if (newFilters.area && newFilters.area !== "all") params.area = newFilters.area;
     if (newFilters.bedrooms && newFilters.bedrooms !== "any") params.bedrooms = parseInt(newFilters.bedrooms);
-    if (newFilters.minPrice) params.min_price = parseFloat(newFilters.minPrice);
-    if (newFilters.maxPrice) params.max_price = parseFloat(newFilters.maxPrice);
-    if (newFilters.status && newFilters.status !== "all") params.status = newFilters.status;
+    if (newFilters.minPrice && newFilters.minPrice !== "none") params.min_price = parseFloat(newFilters.minPrice);
+    if (newFilters.maxPrice && newFilters.maxPrice !== "none") params.max_price = parseFloat(newFilters.maxPrice);
     
     onFilterChange(params);
   };
 
   const clearFilters = () => {
     setFilters({
-      area: "",
-      bedrooms: "",
-      minPrice: "",
-      maxPrice: "",
-      status: "",
+      area: "all",
+      bedrooms: "any",
+      minPrice: "none",
+      maxPrice: "none",
     });
     onFilterChange(propertyType ? { property_type: propertyType } : {});
   };
 
-  const hasActiveFilters = Object.values(filters).some((v) => v && v !== "all" && v !== "any");
+  const hasActiveFilters = 
+    filters.area !== "all" || 
+    filters.bedrooms !== "any" || 
+    filters.minPrice !== "none" || 
+    filters.maxPrice !== "none";
 
   return (
     <div data-testid="property-filter" className="mb-12">
@@ -155,7 +156,7 @@ export default function PropertyFilter({ onFilterChange, propertyType }) {
                 <SelectValue placeholder="No Min" />
               </SelectTrigger>
               <SelectContent className="bg-dark-surface border-gold/20">
-                <SelectItem value="">No Min</SelectItem>
+                <SelectItem value="none">No Min</SelectItem>
                 <SelectItem value="500000">500K</SelectItem>
                 <SelectItem value="1000000">1M</SelectItem>
                 <SelectItem value="2000000">2M</SelectItem>
@@ -181,7 +182,7 @@ export default function PropertyFilter({ onFilterChange, propertyType }) {
                 <SelectValue placeholder="No Max" />
               </SelectTrigger>
               <SelectContent className="bg-dark-surface border-gold/20">
-                <SelectItem value="">No Max</SelectItem>
+                <SelectItem value="none">No Max</SelectItem>
                 <SelectItem value="1000000">1M</SelectItem>
                 <SelectItem value="2000000">2M</SelectItem>
                 <SelectItem value="5000000">5M</SelectItem>
