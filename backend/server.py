@@ -82,7 +82,7 @@ class ContactInquiry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     email: str
-    phone: str
+    phone: Optional[str] = None
     message: str
     interest: Optional[str] = None
     property_id: Optional[str] = None
